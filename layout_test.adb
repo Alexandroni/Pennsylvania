@@ -74,8 +74,29 @@ procedure layout_test is
 
    end terminator_test;
 
+   --SENSOR BLOCK TEST--
+   procedure sensor_blocks_test (ID : in Sensor_ID) is
 
+      Block_1 : Block_ID;
+      Block_2 : Block_ID;
 
+   begin
+
+      Sensor_Blocks (ID, Block_1, Block_2);
+
+      Put_Line("Sensor ID: ");
+      Sensor_ID_IO.Put(Item => ID);
+      New_Line;
+
+      Put_Line("Block 1:");
+      Block_ID_IO.Put(Item => Block_1);
+      New_Line;
+
+      Put_Line("Block 2:");
+      Block_ID_IO.Put(Item => Block_2);
+      New_Line;
+
+   end sensor_blocks_test;
 
    -----------------------------------------------------------------------------
    --Variables
@@ -90,5 +111,7 @@ begin
                --Turnout_Opposite);
 
    --terminator_test(13, Normal);
+
+   --sensor_blocks_test (20);
 
 end layout_test;
