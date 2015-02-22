@@ -24,6 +24,7 @@ procedure layout_test is
    -----------------------------------------------------------------------------
    --Test Functions/Procedures
 
+   --OPPOSITE TEST--
    procedure Opposite_test (Blck_dir      : in Block_Direction;
                             Turn_dir      : in Turnout_Direction;
                             B_Dir_changed : out Block_Direction;
@@ -39,6 +40,43 @@ procedure layout_test is
 
    end Opposite_test;
 
+
+   --NEXT TERMINATOR TEST--
+   procedure terminator_test (Blck_ID : in Block_ID;
+                              Direction : in Block_Direction) is
+
+      Next_ID   : Integer;
+      Terminator: Terminator_Type;
+
+   begin
+
+      layout.Get_Next(Blck_ID,
+                      Direction,
+                      Next_ID,
+                      Terminator);
+
+      Put_Line("Block:");
+      Block_ID_IO.Put(Item => Blck_ID);
+      New_Line;
+
+      Put_Line("Block Direction:");
+      Block_Direction_IO.Put(Item => Direction);
+      New_Line;
+
+      Put_Line("Next Terminator Type");
+      Terminator_Type_IO.Put(Item => Terminator);
+      New_Line;
+
+      Put_Line("Next ID:");
+      Block_ID_IO.Put(Item => Next_ID);
+      New_Line;
+
+
+   end terminator_test;
+
+
+
+
    -----------------------------------------------------------------------------
    --Variables
    Block_Opposite   : Block_Direction;
@@ -46,9 +84,11 @@ procedure layout_test is
 
 begin
 
-   Opposite_test(Reversed,
-                 Right,
-                 Block_Opposite,
-                 Turnout_Opposite);
+   --Opposite_test(Reversed,
+                 --Right,
+                 --Block_Opposite,
+               --Turnout_Opposite);
+
+   --terminator_test(13, Normal);
 
 end layout_test;
