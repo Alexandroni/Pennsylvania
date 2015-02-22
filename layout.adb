@@ -401,7 +401,7 @@ package body layout is
    ------------------
    --Return turnout id and his set if is force turnout
    procedure Who_is_Force (Block_Num       : in Block_ID;
-                           Block_Direction : in Block_Direction;
+                           Block_Dir       : in Block_Direction;
                            Turnout_Num     : out Turnout_ID;
                            Turnout_Choice  : out Turnout_Set) is
       Next_ID    : Integer;
@@ -411,20 +411,20 @@ package body layout is
    begin
 
       Is_Force( Block_Num => Block_Num,
-                Direction => Block_Direction,
+                Direction => Block_Dir,
                 Answer    => Answer);
 
       if Answer = True then
 
          Get_Next( Block_Num  => Block_Num,
-                   Direction  => Block_Direction,
+                   Direction  => Block_Dir,
                    ID         => Next_ID,
                    Terminator => Terminator);
 
          --get the opposite side
 
          Get_Next (Block_Num  => Next_ID,
-                   Direction  => Opposite(Block_Direction),
+                   Direction  => Opposite(Block_Dir),
                    ID         => Force_ID,
                    Terminator => Terminator);
 
@@ -507,7 +507,7 @@ package body layout is
                           Direction      : in Block_Direction;
                           Choice_Turnout : out Turnout_ID) is
       Next_ID    : Integer;
-      Terminator : Terminator;
+      Terminator : Terminator_Type;
 
    begin
 
@@ -524,7 +524,7 @@ package body layout is
 
       end loop;
 
-      Choice_Turnout := ID;
+      Choice_Turnout := Next_ID;
 
    end Next_choice;
 
