@@ -79,7 +79,7 @@ package Layout is
    --block given block ID and Direction
 
    procedure Who_is_Force (Block_Num       : in Block_ID;
-                           Block_Direction : in Block_Direction;
+                           Block_Dir       : in Block_Direction;
                            Turnout_Num     : out Turnout_ID;
                            Turnout_Choice  : out Turnout_Set);
    --procedure to return the force turnout ID at the end of the
