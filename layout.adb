@@ -28,40 +28,10 @@ package body layout is
 
    ----------------------------------------------------------------------------
    --Array, Rec for list of Block, Turn, Sensor extended
-   ----------------------------------------------------------------------------
-
-   type Turnout_list is array (1..26) of Turnout_Set;
-
-   Turnout_Set_Array : Constant Turnout_list :=
-                   (1  => (Left_set),
-                    2  => (Left_set),
-                    3  => (Left_set),
-                    4  => (Left_set),
-                    5  => (Left_set),
-                    6  => (Left_set),
-                    7  => (Left_set),
-                    8  => (Left_set),
-                    9  => (Left_set),
-                    10 => (Left_set),
-                    11 => (Left_set),
-                    12 => (Left_set),
-                    13 => (Left_set),
-                    14 => (Left_set),
-                    15 => (Left_set),
-                    16 => (Left_set),
-                    17 => (Left_set),
-                    18 => (Left_set),
-                    19 => (Left_set),
-                    20 => (Left_set),
-                    21 => (Left_set),
-                    22 => (Left_set),
-                    23 => (Left_set),
-                    24 => (Left_set),
-                    25 => (Left_set),
-                    26 => (Left_set));
+   ---------------------------------------------------------------------------
 
 
-   type Turnout_Type is array (1 .. 26, Turnout_Direction) of Block_ID;
+   type Turnout_Type is array (Turnout_ID, Turnout_Direction) of Block_ID;
    Turnout_block_list : constant Turnout_Type :=
                   (1 => (13,12),
                    2 => (2,14),
@@ -138,8 +108,8 @@ package body layout is
                       42 => (35, 20,Off),
                       43 => (20, 21,Off),
                       44 => (39, 21,Off),
-     		       45 => (5, 4,Off),
-     		       46 => (23, 21,Off),
+     		      45 => (5, 4,Off),
+     		      46 => (23, 21,Off),
                       47 => (22, 21,Off),
                       48 => (6, 22,Off),
                       49 => (5, 6,Off),
@@ -147,7 +117,7 @@ package body layout is
                       51 => (40, 7,Off));
 
    -- create record of array of turnout
-      type End_Of_Block_Array is array (1..40, Block_Direction) of
+      type End_Of_Block_Array is array (Block_ID, Block_Direction) of
         Terminator_Rec;
    --create a record of end of block
 
@@ -246,48 +216,48 @@ package body layout is
                       6 => (18,17,Left));
 
    --Array contains block cross
-    type Block_Cross is array (1..40) of Block_ID;
+    type Block_Cross is array (Block_ID) of Block_Array;
    Block_Cross_Array : constant Block_Cross :=
-                     (1 => 0,
-                     2 => 0,
-                     3 => 0,
-                     4 => 0,
-                     5 => 0,
-                     6 => 0,
-                     7 => 0,
-                     8 => 29,
-                     9 => 0,
-                     10 => 0,
-                     11 => 0,
-                     12 => 0,
-                     13 => 0,
-                     14 => 0,
-                     15 => 0,
-                     16 => 0,
-                     17 => 0,
-                     18 => 0,
-                     19 => 0,
-                     20 => 0,
-                     21 => 0,
-                     22 => 0,
-                     23 => 39,
-                     24 => 30,
-                     25 => 0,
-                     26 => 0,
-                     27 => 0,
-                     28 => 0,
-                     29 => 8,
-                     30 => 24,
-                     31 => 0,
-                     32 => 0,
-                     33 => 0,
-                     34 => 0,
-                     35 => 0,
-                     36 => 0,
-                     37 => 0,
-                     38 => 0,
-                     39 => 23,
-                     40 => 0);
+                     (1 => (),
+                     2 => (),
+                     3 => (),
+                     4 => (),
+                     5 => (),
+                     6 => (),
+                     7 => (),
+                     8 => (29),
+                     9 => (),
+                     10 => (),
+                     11 => (),
+                     12 => (),
+                     13 => (),
+                     14 => (),
+                     15 => (),
+                     16 => (),
+                     17 => (),
+                     18 => (),
+                     19 => (),
+                     20 => (),
+                     21 => (),
+                     22 => (),
+                     23 => (39),
+                     24 => (30),
+                     25 => (),
+                     26 => (),
+                     27 => (),
+                     28 => (),
+                     29 => (8),
+                     30 => (24),
+                     31 => (),
+                     32 => (),
+                     33 => (),
+                     34 => (),
+                     35 => (),
+                     36 => (),
+                     37 => (),
+                     38 => (),
+                     39 => (23),
+                     40 => ());
 
    ----------------------------------------------------------------------------
    --Functions and Procedures
@@ -326,23 +296,55 @@ package body layout is
    --Return the terminator of a block
    procedure Get_Next(Block_Num : in Block_ID;
                       Direction : in Block_Direction;
-                      ID        : out Integer;
                       Terminator: out Terminator_Type) is
-
    begin
       Terminator := End_Of_Block(Block_Num,Direction).Which;
-      if Terminator = Turnout then
-         ID := End_Of_Block(Block_Num,Direction).Turnout_Num;
-      elsif Terminator = Block then
-         ID := End_Of_Block(Block_Num,Direction).Block_Num;
-      end if;
    end Get_Next;
+
+
+   ---------------------
+   --Get Next Block ID--
+   ---------------------
+   procedure Get_Next_Block_ID (Block     : in Block_ID;
+                                Direction : in Block_Direction;
+                                Next_ID   : out Block_ID) is
+      Terminator : Terminator_Type;
+   begin
+
+      Get_Next(Block_Num  => Block,
+               Direction  => Direction,
+               Terminator => Terminator);
+
+      if Terminator = Block then
+         Next_ID := End_Of_Block(Block,Direction).Block_Num;
+      end if;
+
+   end Get_Next_Block_ID;
+
+   -----------------------
+   --Get Next Turnout ID--
+   -----------------------
+   procedure Get_Next_Turnout_ID (Block     : in Block_ID;
+                                  Direction : in Block_Direction;
+                                  Next_ID   : out Turnout_ID) is
+      Terminator : Terminator_Type;
+   begin
+
+      Get_Next(Block_Num  => Block,
+               Direction  => Direction,
+               Terminator => Terminator);
+
+      if Terminator = Turnout then
+         Next_ID := End_Of_Block(Block,Direction).Turnout_Num;
+      end if;
+
+   end Get_Next_Block_ID;
+
 
    -----------------
    --Sensor Blocks--
    -----------------
    --Return two blocks next to a sensor
-
    procedure Sensor_Blocks (Sensor  : in Sensor_ID;
                             Block1  : out Block_ID;
                             Block2  : out Block_ID) is
@@ -354,11 +356,21 @@ package body layout is
    -----------------
    ------Is On------
    -----------------
-   procedure Is_On (Sensor : in Sensor_ID;
+
+   procedure Is_On (Block1 : in Block_ID;
+                    Block2 : in Block_ID;
                     Status : out Sensor_Status) is
    begin
 
-      Status := Layout_Sensors (Sensor).Status;
+      for Index in Layout_Sensors'Range loop
+
+         if Layout_Sensors(Index).Block1 = Block1 and Layout_Sensors(Index).Block2 = Block2 then
+             Status := Layout_Sensors(Index).Status;
+         elsif Layout_Sensors(Index).Block1 = Block2 and Layout_Sensors(Index).Block2 = Block1 then
+             Status := Layout_Sensors(Index).Status;
+         end if;
+
+      end loop;
 
    end Is_On;
 
@@ -373,27 +385,40 @@ package body layout is
       Next_ID    : Integer;
       Back_ID    : Integer;
       Terminator : Terminator_Type;
+      Status     : Sensor_Status;
    begin
       Get_Next( Block_Num  => Block_Num,
                 Direction  => Direction,
-                ID         => Next_ID,
                 Terminator => Terminator);
 
       if Terminator = Turnout then
          Answer := False;
       elsif Terminator = Block then
 
-         Get_Next (Block_Num  => Next_ID,
-                   Direction  => Opposite(Direction),
-                   ID         => Back_ID,
-                   Terminator => Terminator);
+         Get_Next_Next_Block (Block_Num  => Block_Num,
+                              Direction  => Direction,
+                              ID         => Next_ID);
+
+         Is_On(Block1 => Block_Num,
+               Block2 => Next_ID,
+               Status => Status);
+
+         if Status = On then
+            Get_Next(Block_Num  => Next_ID,
+                     Direction  => Direction,
+                     Terminator => Terminator);
+         else
+            Get_Next(Block_Num  => Next_ID,
+                     Direction  => Opposite(Direction),
+                     Terminator => Terminator);
+         end if;
 
          if Terminator = Turnout then
             Answer := True;
          else
             Answer := False;
          end if;
-      end if;--end condition for terminator be a block
+      end if;
    end Is_Force;
 
    ------------------
@@ -403,33 +428,45 @@ package body layout is
    procedure Who_is_Force (Block_Num       : in Block_ID;
                            Block_Dir       : in Block_Direction;
                            Turnout_Num     : out Turnout_ID;
-                           Turnout_Choice  : out Turnout_Set) is
-      Next_ID    : Integer;
-      Force_ID   : Integer;
-      Terminator : Terminator_Type;
+                           Turnout_Choice  : out Turnout_Direction) is
       Answer     : Boolean;
+      Next_ID    : Block_ID;
+      Turnout_ID : Turnout_ID;
+      Status     : Sensor_Status;
    begin
 
-      Is_Force( Block_Num => Block_Num,
-                Direction => Block_Dir,
-                Answer    => Answer);
+      Is_Force(Block_Num  => Block_Num,
+               Direction  => Block_Dir,
+               Answer     => Answer);
 
       if Answer = True then
 
-         Get_Next( Block_Num  => Block_Num,
-                   Direction  => Block_Dir,
-                   ID         => Next_ID,
-                   Terminator => Terminator);
+         Get_Next_Block_ID(Block      => Block_Num,
+                           Direction  => Direction,
+                           Terminator => Next_ID);
 
-         --get the opposite side
 
-         Get_Next (Block_Num  => Next_ID,
-                   Direction  => Opposite(Block_Dir),
-                   ID         => Force_ID,
-                   Terminator => Terminator);
+         Is_On(Block1 => Block_Num,
+               Block2 => Next_ID,
+               Status => Status);
 
-         Turnout_Num    := Force_ID;
-         Turnout_Choice := Turnout_Set_Array(Force_ID);
+         if Status = On then
+
+            Get_Next_Turnout_ID(Block     => Next_ID,
+                                Direction => Block_Dir,
+                                Next_ID   => Turnout_ID);
+         else
+
+            Get_Next_Turnout_ID(Block     => Next_ID,
+                                Direction => Opposite(Block_Dir),
+                                Next_ID   => Turnout_ID);
+         end if;
+
+         if Turnout_block_list(Turnout_ID).Left = Block_Num then
+            Turnout_Choice := Left;
+         else
+            Turnout_Choice := Right;
+         end if;
 
       end if;
 
@@ -440,9 +477,8 @@ package body layout is
    ----------------
    --Return True if the turnout is joint
 
-   procedure Is_Joint (Turnout_Num : in Turnout_ID;
-                       Direction   : in Turnout_Direction;
-                       Answer      : out Boolean) is
+   function Is_Joint (Turnout_Num : in Turnout_ID;
+                      Direction   : in Turnout_Direction) return Boolean is
    begin
 
       for Index in Joint_Turnout_Array'Range loop
@@ -450,14 +486,13 @@ package body layout is
          if Turnout_Num = Joint_Turnout_Array (Index).First_Joint or Turnout_Num = Joint_Turnout_Array (Index).Second_Joint then
 
             if Direction = Joint_Turnout_Array (Index).Joint_At then
-               Answer := True;
+               return True;
             else
-               Answer := False;
+               return False;
             end if;
          else
-            Answer := False;
+            return False;
          end if;
-
 
       end loop;
 
@@ -468,27 +503,28 @@ package body layout is
    ----------------
    --Return the Turnout id and his direction of its joint
 
-   procedure Who_is_Joint (Turnout_Num     : in Turnout_ID;
-                           Direction       : in Turnout_Direction;
-                           Joint_Turnout   : out Turnout_ID) is
+   function Who_is_Joint (Turnout_Num    : in Turnout_ID;
+                           Direction     : in Turnout_Direction) return Turnout_ID is
       Answer : Boolean;
    begin
 
-      Is_Joint( Turnout_Num => Turnout_Num,
-                Direction   => Direction,
-                Answer      => Answer);
+      Answer := Is_Joint(Turnout_Num, Direction);
 
       if Answer = True then
 
          for Index in Joint_Turnout_Array'Range loop
 
-            if Turnout_Num = Joint_Turnout_Array (Index).First_Joint and Direction = Joint_Turnout_Array (Index).Joint_At then
+            if Turnout_Num = Joint_Turnout_Array (Index).First_Joint then
 
-               Joint_Turnout := Joint_Turnout_Array (Index).Second_Joint;
+               if Direction = Joint_Turnout_Array (Index).Joint_At then
+                  return Joint_Turnout_Array (Index).Second_Joint;
+               end if;
 
-            elsif Turnout_Num = Joint_Turnout_Array (Index).Second_Joint and Direction = Joint_Turnout_Array (Index).Joint_At then
+            elsif Turnout_Num = Joint_Turnout_Array (Index).Second_Joint then
 
-               Joint_Turnout := Joint_Turnout_Array (Index).First_Joint;
+               if Direction = Joint_Turnout_Array (Index).Joint_At then
+                  return Joint_Turnout_Array (Index).First_Joint;
+               end if;
 
             end if;
 
@@ -497,6 +533,17 @@ package body layout is
       end if;
 
    end Who_is_Joint;
+
+   --------------------
+   -----Cross Block----
+   --------------------
+   function Cross_Blocks (Block : in Block_ID) return Block_Array is
+   begin
+
+      return Block_Cross_Array(Block);
+
+   end Cross_Blocks;
+
 
    --------------------
    ----Next Choice ----
@@ -508,23 +555,51 @@ package body layout is
                           Choice_Turnout : out Turnout_ID) is
       Next_ID    : Integer;
       Terminator : Terminator_Type;
-
+      Status     : Sensor_Status;
+      Turn_ID    : Turnout_ID;
    begin
 
-      Next_ID := Block_Num;
+      Loop
 
-      loop
+         Get_Next(Block_Num => Block_Num,
+                     Direction => Direction,
+                     Terminator => Terminator);
 
-         Get_Next (Block_Num  => Next_ID,
-                   Direction  => Direction,
-                   ID         => Next_ID,
-                   Terminator => Terminator);
+         if Terminator /= Turnout then
+
+            Get_Next_Block_ID(Block     => Block_Num,
+                              Direction => Direction,
+                              Next_ID   => Next_ID);
+
+            Is_On(Block1 => Block_Num,
+                  Block2 => Next_ID,
+                  Status => Status);
+
+            if Status = On then
+
+               Direction := Opposite(Direction);
+
+            end if;
+
+            Block_Num := Next_ID;
+
+         else
+
+            Get_Next_Turnout_ID(Block     => Block_Num,
+                                Direction => Direction,
+                                Next_ID   => Turn_ID);
+         end if;
 
          exit when Terminator = Turnout;
-
       end loop;
 
-      Choice_Turnout := Next_ID;
+      end if;
+
+
+
+
+      Choice_Turnout := Turn_ID;
+
 
    end Next_choice;
 
