@@ -15,7 +15,7 @@ package Layout is
    type Block_Direction is (Normal, Reversed);
    -- Return the polarity of a block
 
-   type Block_Array is array (Positive range <>) of Block_ID;
+   type Block_Array is array (Positive range<>) of Block_ID;
    --Return a list of block with ID
 
 
@@ -52,7 +52,7 @@ package Layout is
                       Terminator: out Terminator_Type);
    --take a block ID, the direction, and return the terminator next to this block
 
-   procedure Get_Next_Block_ID (Block     : in Block_ID;
+   procedure Get_Next_Block_ID (Block_N   : in Block_ID;
                                 Direction : in Block_Direction;
                                 Next_ID   : out Block_ID);
    --take a block id, the direction, and return the next block id if there is a
@@ -84,7 +84,7 @@ package Layout is
 
    procedure Who_is_Force (Block_Num       : in Block_ID;
                            Block_Dir       : in Block_Direction;
-                           Turnout_Num     : out Turnout_ID;
+                           Turn_ID         : out Turnout_ID;
                            Turnout_Choice  : out Turnout_Direction);
    --procedure to return the force turnout ID at the end of the
    --given block as well
@@ -94,9 +94,8 @@ package Layout is
                       Direction   : in Turnout_Direction) return Boolean;
    --function answer whether a turn out is half of a joint turnout.
 
-   procedure Who_is_Joint (Turnout_Num     : in Turnout_ID;
-                           Direction       : in Turnout_Direction;
-                           Joint_Turnout   : out Turnout_ID);
+   function Who_is_Joint (Turnout_Num : in Turnout_ID;
+                           Direction  : in Turnout_Direction) return Turnout_ID;
    --function returns the other JOint ID if the given Turnout_ID is
    -- a half of a joint
 
