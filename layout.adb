@@ -448,7 +448,7 @@ package body layout is
                       Direction   : in Turnout_Direction) return Boolean is
    begin
 
-      for Index in Joint_Turnout_Array'Range loop
+      for Index in 1..6 loop
 
          if Turnout_Num = Joint_Turnout_Array (Index).First_Joint or Turnout_Num = Joint_Turnout_Array (Index).Second_Joint then
 
@@ -479,7 +479,7 @@ package body layout is
 
       if Answer = True then
 
-         for Index in Joint_Turnout_Array'Range loop
+         for Index in 1..6 loop
 
             if Turnout_Num = Joint_Turnout_Array (Index).First_Joint then
 
@@ -526,7 +526,7 @@ package body layout is
    --Return the next choice turnout of a block
 
    procedure Next_choice (Block_Num      : in Block_ID;
-                          Direction : in Block_Direction;
+                          Direction      : in Block_Direction;
                           Choice_Turnout : out Turnout_ID) is
       Next_blc_ID : Block_ID;
       Blck_Direction : Block_Direction;
