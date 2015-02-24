@@ -1,5 +1,5 @@
 --Pensylvania Huy Nguyen
---         -- Joao Pedro Alexandroni
+--Verifyed: Joao Pedro Alexandroni
 
 with layout;
 package body layout is
@@ -309,6 +309,18 @@ package body layout is
 
    end Get_Next_Turnout_ID;
 
+   -------------
+   --Get_Block--
+   -------------
+
+   procedure Get_Block (Turnout   : in Turnout_ID;
+                        Direction : in Turnout_Direction;
+                        Block     : out Block_ID) is
+   begin
+
+      Block := Turnout_block_list (Turnout, Direction);
+
+   end Get_Block;
 
    -----------------
    --Sensor Blocks--
@@ -454,14 +466,13 @@ package body layout is
 
             if Direction = Joint_Turnout_Array (Index).Joint_At then
                return True;
-            else
-               return False;
             end if;
-         else
-            return False;
+
          end if;
 
       end loop;
+
+      return False;
 
    end Is_Joint;
 
@@ -502,20 +513,46 @@ package body layout is
    end Who_is_Joint;
 
    --------------------
-   -----Cross Block----
+   --Is Crossing-------
    --------------------
-   function Cross_Blocks (Block : in Block_ID) return Block_ID is
+   function Is_crossing(Block_Number: in Block_ID) return Boolean is
    begin
 
-      for Index in Block_Cross_Array'Range loop
+      for Index in 1..3 loop
 
-         if Block = Block_Cross_Array(Index).Block1 then
-            return Block_Cross_Array(Index).Block2;
-         elsif Block = Block_Cross_Array(Index).Block2 then
-            return Block_Cross_Array(Index).Block1;
+         if Block_Number =  Block_Cross_Array(Index).Block1 or Block_Number =  Block_Cross_Array(Index).Block2 then
+
+            return True;
+
          end if;
 
       end loop;
+
+      return False;
+
+   end Is_crossing;
+   --------------------
+   -----Cross Block----
+   --------------------
+   function Cross_Blocks (Block_Num : in Block_ID) return Block_ID is
+      Answer : Boolean;
+   begin
+
+      Answer := Is_crossing(Block_Num);
+
+      if Answer = True then
+
+         for Index in Block_Cross_Array'Range loop
+
+            if Block_Num = Block_Cross_Array(Index).Block1 then
+               return Block_Cross_Array(Index).Block2;
+            elsif Block_Num = Block_Cross_Array(Index).Block2 then
+               return Block_Cross_Array(Index).Block1;
+            end if;
+
+         end loop;
+
+      end if;
 
    end Cross_Blocks;
 
