@@ -85,6 +85,30 @@ procedure layout_test is
 
    end Get_next_test;
 
+   --GET BLOCK TEST-------------------------------------------------------------
+   procedure Get_Block_test (Turnout_Num : in Turnout_ID;
+                             Turn_Direct : in Turnout_Direction) is
+      Next_Block : Block_ID;
+   begin
+
+      Layout.Get_Block(Turnout   => Turnout_Num,
+                       Direction => Turn_Direct,
+                       Block     => Next_Block);
+
+      Put_Line("Turnout ID: ");
+      Turnout_ID_IO.Put(Item => Turnout_Num);
+      New_Line;
+
+      Put_Line("Turn Direction: ");
+      Turnout_Direction_IO.Put(Item => Turn_Direct);
+      New_Line;
+
+      Put_Line("Next Block: ");
+      Block_ID_IO.Put(Item => Next_Block);
+
+
+   end Get_Block_test;
+
    --SENSOR BLOCKS TEST---------------------------------------------------------
    procedure Sensor_blocks_test (Sensor_IN : in Sensor_ID) is
 
@@ -228,10 +252,65 @@ procedure layout_test is
 
    end Who_is_joint_test;
 
+   -----------------------------------------------------------------------------
+   procedure Is_crossing_test (Block_N : in Block_ID) is
+      Answer : Boolean;
+   begin
+
+      Answer := Layout.Is_crossing(Block_N);
+
+      Put_Line("Block ID: ");
+      Block_ID_IO.Put(Item => Block_N);
+      New_Line;
+
+      Put_Line("Is crossing? ");
+      Put(Item => Boolean'Image(Answer));
+
+   end Is_crossing_test;
+
+   --CROSS BLOCK TEST-----------------------------------------------------------
+   procedure Cross_block_test (Block_Number : in Block_ID) is
+      Cross_blocked : Block_ID;
+   begin
+
+      Cross_blocked := Cross_Blocks (Block_Number);
+
+      Put_Line("Block ID: ");
+      Block_ID_IO.Put(Item => Block_Number);
+      New_Line;
+
+      Put_Line("Cross Block: ");
+      Block_ID_IO.Put(Item => Cross_blocked);
+      New_Line;
+
+   end Cross_block_test;
+
+   --NEXT CHOICE TEST-----------------------------------------------------------
+   procedure Next_choice_Test (Block_Number : in Block_ID;
+                               Block_Direct : in Block_Direction) is
+      Turn_Choice : Turnout_ID;
+   begin
+
+      Layout.Next_choice(Block_Num      => Block_Number,
+                         Direction      => Block_Direct,
+                         Choice_Turnout => Turn_Choice);
+
+      Put_Line("Block ID: ");
+      Block_ID_IO.Put(Item => Block_Number);
+      New_Line;
+
+      Put_Line("Block Direction: ");
+      Block_Direction_IO.Put(Item => Block_Direct);
+      New_Line;
+
+      Put_Line("Next Choice Turnout: ");
+      Turnout_ID_IO.Put(Item => Turn_Choice);
+
+   end Next_choice_Test;
 
    --Variables
-   Block_Opposite   : Block_Direction;
-   Turnout_Opposite : Turnout_Direction;
+   --Block_Opposite   : Block_Direction;
+   --Turnout_Opposite : Turnout_Direction;
 
 begin
 
@@ -242,6 +321,8 @@ begin
 
    --Get_next_test(2, Reversed);
 
+   --Get_Block_test(9, Right);
+
    --Sensor_blocks_test(3);
 
    --Is_On_Test(12,31);
@@ -250,9 +331,14 @@ begin
 
    --Who_is_force_test(16, Normal);
 
-   Is_joint_test(17, Left);
+   --Is_joint_test(17, Left);
 
-   --Who_is_joint_test(2,left);
+   --Who_is_joint_test(6,right);
 
-   null;
+   --Is_crossing_test(1);
+
+   --Cross_block_test(24);
+
+   --Next_choice_Test(1, Reversed);
+
 end layout_test;
