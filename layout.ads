@@ -1,5 +1,5 @@
 --Pensylvania Huy Nguyen
---
+--Verifyed: Joao Pedro Alexandroni
 package Layout is
    pragma Pure (Layout);
 
@@ -64,6 +64,12 @@ package Layout is
    --take a block id, the directio, and return the next turnout id if there is a
    --turnout next
 
+
+   ---------
+   procedure Get_Block (Turnout   : in Turnout_ID;
+                        Direction : in Turnout_Direction;
+                        Block     : out Block_ID);
+   ---------
    function Opposite (Direction : in Block_Direction) return Block_Direction;
    --function to return the opposite of a given block direction
 
@@ -109,4 +115,10 @@ package Layout is
                     Block2 : in Block_ID;
                     Status : out Sensor_Status);
    --function return the status of a sensor
+
+   function Is_crossing(Block_Number: in Block_ID) return Boolean;
+   --Function that verify if the Block cross another block
+
+   function Cross_Blocks (Block_Num : in Block_ID) return Block_ID;
+   --function thtat return the ID of Block that cross another Block(in)
 end Layout;
