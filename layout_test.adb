@@ -13,8 +13,6 @@ procedure layout_test is
 
    package Turnout_ID_IO is new Ada.Text_IO.Enumeration_IO (Turnout_ID);
    package Turnout_Direction_IO is new Ada.Text_IO.Enumeration_IO (Turnout_Direction);
-   package Turnout_Joint_IO is new Ada.Text_IO.Enumeration_IO (Turnout_Joint);
-   package Turnout_Set_IO is new Ada.Text_IO.Enumeration_IO (Turnout_Set);
 
    package Sensor_ID_IO is new Ada.Text_IO.Enumeration_IO (Sensor_ID);
    package Sensor_Status_IO is new Ada.Text_IO.Enumeration_IO (Sensor_Status);
@@ -40,78 +38,221 @@ procedure layout_test is
 
    end Opposite_test;
 
+   --GET NEXT TEST--------------------------------------------------------------
+   procedure Get_next_test (Block_number : in Block_ID;
+                            Blck_Direct  : in Block_Direction) is
 
-   --NEXT TERMINATOR TEST--
-   procedure terminator_test (Blck_ID : in Block_ID;
-                              Direction : in Block_Direction) is
-
-      Next_ID   : Integer;
-      Terminator: Terminator_Type;
-
+      Next_Termt   : Terminator_Type;
+      Next_Blck_ID : Block_ID;
+      Next_Turn_ID : Turnout_ID;
    begin
 
-      layout.Get_Next(Blck_ID,
-                      Direction,
-                      Next_ID,
-                      Terminator);
+      layout.Get_Next(Block_Num  => Block_number,
+                      Direction  => Blck_Direct,
+                      Terminator => Next_Termt);
 
-      Put_Line("Block:");
-      Block_ID_IO.Put(Item => Blck_ID);
+      Put_Line("Block ID: ");
+      Block_ID_IO.Put(Item => Block_number);
       New_Line;
 
-      Put_Line("Block Direction:");
-      Block_Direction_IO.Put(Item => Direction);
+      Put_Line("Direction: ");
+      Block_Direction_IO.Put(Item => Blck_Direct);
       New_Line;
 
-      Put_Line("Next Terminator Type");
-      Terminator_Type_IO.Put(Item => Terminator);
+      Put_Line("Next Terminator: ");
+      Terminator_Type_IO.Put(Item => Next_Termt);
       New_Line;
 
-      Put_Line("Next ID:");
-      Block_ID_IO.Put(Item => Next_ID);
-      New_Line;
+      if Next_Termt = Block then
 
+         layout.Get_Next_Block_ID(Block_N   => Block_number,
+                                  Direction => Blck_Direct,
+                                  Next_ID   => Next_Blck_ID);
 
-   end terminator_test;
+         Put_Line("Next Block ID: ");
+         Block_ID_IO.Put(Item => Next_Blck_ID);
 
-   --SENSOR BLOCK TEST--
-   procedure sensor_blocks_test (ID : in Sensor_ID) is
+      else
+
+         Layout.Get_Next_Turnout_ID(Block     => Block_number,
+                                    Direction => Blck_Direct,
+                                    Next_ID   => Next_Turn_ID);
+
+         Put_Line("Next Turnout ID: ");
+         Turnout_ID_IO.Put(Item => Next_Turn_ID);
+
+      end if;
+
+   end Get_next_test;
+
+   --SENSOR BLOCKS TEST---------------------------------------------------------
+   procedure Sensor_blocks_test (Sensor_IN : in Sensor_ID) is
 
       Block_1 : Block_ID;
       Block_2 : Block_ID;
 
    begin
 
-      Sensor_Blocks (ID, Block_1, Block_2);
+      layout.Sensor_Blocks (Sensor => Sensor_IN,
+                            Block1 => Block_1,
+                            Block2 => Block_2);
 
       Put_Line("Sensor ID: ");
-      Sensor_ID_IO.Put(Item => ID);
+      Sensor_ID_IO.Put(Item => Sensor_IN);
       New_Line;
 
-      Put_Line("Block 1:");
+      Put_Line("Block 1: ");
       Block_ID_IO.Put(Item => Block_1);
       New_Line;
 
-      Put_Line("Block 2:");
+      Put_Line("Block 2: ");
+      Block_ID_IO.Put(Item => Block_2);
+
+   end Sensor_blocks_test;
+
+   --IS ON TEST-----------------------------------------------------------------
+   procedure Is_On_Test (Block_1 : in Block_ID;
+                         Block_2 : in Block_ID) is
+      Sensor_Sts : Sensor_Status;
+   begin
+
+      Is_On(Block1 => Block_1,
+            Block2 => Block_2,
+            Status => Sensor_Sts);
+
+      Put_Line("Block 1: ");
+      Block_ID_IO.Put(Item => Block_1);
+      New_Line;
+
+      Put_Line("Block 2: ");
       Block_ID_IO.Put(Item => Block_2);
       New_Line;
 
-   end sensor_blocks_test;
+      Put_Line("Sensor Status: ");
+      Sensor_Status_IO.Put(Item => Sensor_Sts);
 
-   -----------------------------------------------------------------------------
+   end Is_On_Test;
+
+   --IS FORCE TEST--------------------------------------------------------------
+   procedure Is_Force_Test (Block_Number : in Block_ID;
+                            Blck_Direct  : in Block_Direction) is
+      Answer : Boolean;
+   begin
+
+      Is_Force(Block_Num => Block_Number,
+               Direction => Blck_Direct,
+               Answer => Answer);
+
+      Put_Line("Block ID: ");
+      Block_ID_IO.Put(Item => Block_Number);
+      New_Line;
+
+      Put_Line("Block Direction: ");
+      Block_Direction_IO.Put(Item => Blck_Direct);
+      New_Line;
+
+      Put_Line("Is Force? ");
+      Put(Item => Boolean'Image(Answer));
+
+   end Is_Force_Test;
+
+   --WHO IS FORCE TEST----------------------------------------------------------
+   procedure Who_is_force_test (Block_Number : in Block_ID;
+                                Direction    : in Block_Direction) is
+
+      Turn_Num    : Turnout_ID;
+      Turn_Choice : Turnout_Direction;
+   begin
+
+      Who_is_Force(Block_Num      => Block_Number,
+                   Block_Dir      => Direction,
+                   Turn_ID        => Turn_Num,
+                   Turnout_Choice => Turn_Choice);
+
+      Put_Line("Block ID: ");
+      Block_ID_IO.Put(Item => Block_Number);
+      New_Line;
+
+      Put_Line("Block Direction: ");
+      Block_Direction_IO.Put(Item => Direction);
+      New_Line;
+
+      Put_Line("Turnout ID: ");
+      Turnout_ID_IO.Put(Item => Turn_Num);
+      New_Line;
+
+      Put_Line("Turnout Choice: ");
+      Turnout_Direction_IO.Put(Item => Turn_Choice);
+
+   end Who_is_force_test;
+
+   --IS JOIN TEST---------------------------------------------------------------
+   procedure Is_joint_test (Turn_Number : in Turnout_ID;
+                            Turn_Direct : in Turnout_Direction) is
+      Answer : Boolean;
+   begin
+
+      Answer := Layout.Is_Joint(Turn_Number, Turn_Direct);
+
+      Put_Line("Turnout ID: ");
+      Turnout_ID_IO.Put(Item => Turn_Number);
+      New_Line;
+
+      Put_Line("Turnout Direction: ");
+      Turnout_Direction_IO.Put(Item => Turn_Direct);
+      New_Line;
+
+      Put_Line("Is Joint? ");
+      Put(Item => Boolean'Image(Answer));
+
+   end Is_joint_test;
+
+   --WHO IS JOIN TEST-----------------------------------------------------------
+   procedure Who_is_joint_test (Turn_Number : in Turnout_ID;
+                                Turn_Direct : in Turnout_Direction) is
+      Joint_Turn_ID : Turnout_ID;
+   begin
+
+      Joint_Turn_ID := Who_is_Joint(Turn_Number, Turn_Direct);
+
+      Put_Line("Turnout ID: ");
+      Turnout_ID_IO.Put(Item => Turn_Number);
+      New_Line;
+
+      Put_Line("Turnout Direction: ");
+      Turnout_Direction_IO.Put(Item => Turn_Direct);
+      New_Line;
+
+      Put_Line("Joint Turnout: ");
+      Turnout_ID_IO.Put(Item => Joint_Turn_ID);
+
+   end Who_is_joint_test;
+
+
    --Variables
    Block_Opposite   : Block_Direction;
    Turnout_Opposite : Turnout_Direction;
 
 begin
 
-   --Opposite_test(Reversed,
-                 --Right,
+   --Opposite_test(Normal,
+                 --Left,
                  --Block_Opposite,
-               --Turnout_Opposite);
+                 --Turnout_Opposite);
 
-   --terminator_test(13, Normal);
+   --Get_next_test(2, Reversed);
 
-   --sensor_blocks_test (20);
+   --Sensor_blocks_test(3);
 
+   --Is_On_Test(12,31);
+
+   --Is_Force_Test(35, Normal);
+
+   --Who_is_force_test(16, Normal);
+
+   Is_joint_test(17, Left);
+
+   --Who_is_joint_test(2,left);
+
+   null;
 end layout_test;
