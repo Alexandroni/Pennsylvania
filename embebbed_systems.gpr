@@ -1,0 +1,8 @@
+project Embebbed_Systems is
+
+   for Source_Files use ("controller.adb", "controller.ads", "layout-search.adb", "layout-search.ads", "layout.adb", "layout.ads", "layout_search_test.adb", "layout_test.adb");
+   for Main use ("layout_test.adb");
+   for Source_Dirs use (".", "layout", "layout-search", "controller");
+
+end Embebbed_Systems;
+
